@@ -6,6 +6,10 @@ import json
 client = genai.Client()
 
 
+pdf_path="sample-handbook.pdf"
+items=load_pdf(pdf_path)
+
+
 # ---------- tool registry, Gemini's shape: {"type": "function", "name", "description", "parameters"} ----------
 TOOLS = {}
 
@@ -35,14 +39,14 @@ def tool(description, **params):
 def calc_tool(op1, op2, operation):
     return {"add": op1 + op2, "sub": op1 - op2, "mul": op1 * op2, "div": op1 / op2}[operation]
 
-@tool("Get chunks from pdf that is most similar to given query",
-      query={"type": "string", "description": "query on pdf"},
-      items={"type":"array","description":"List describing the pdf read in format [(<source>,<text>)]"},
-      k={"type":"integer", "description":"get n number of closest chunks"})
-def rank_tool(query, items, k):
-    return rank(query, items, k)
+@tool("Get chunks from uploaded pdf that is most similar to given query",
+      query={"type": "string", "description": "query on pdf"},)
+    #   items={"type":"array","description":"List describing the pdf read in format [(<source>,<text>)]"},
+    #   k={"type":"integer", "description":"get n number of closest chunks"})
+def rank_tool(query):  # items is decieded by user
+    return rank(query, items, k=3)  # items and k is hardcoded default
 
-# ---------- dispatcher: a function_call step in, a function_result dict out, never a crash ----------
+#dispatcher: a function_call step in, a function_result dict out, never a crash ----------
 def execute(step):
     try:
         if step.name not in TOOLS:
@@ -59,12 +63,8 @@ def execute(step):
         "result": [{"type": "text", "text": json.dumps(payload)}],
     }
 
-pdf_path="sample-handbook.pdf"
-items=load_pdf(pdf_path)
-
-
 history = [
-    {"type": "user_input", "content": [{"type": "text", "text": "what is 9/2"}]}
+    {"type": "user_input", "content": [{"type": "text", "text": "what does uploaded pdf say about expenses"}]}
 ]
 
 while True:
