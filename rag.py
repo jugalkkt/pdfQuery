@@ -39,6 +39,3 @@ def load_pdf(path):
 
 
 
-items=load_pdf("./sample-handbook.pdf")
-query = "bill"
-print(rank(query, items, k=3))

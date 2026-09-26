@@ -6,7 +6,7 @@ import json
 client = genai.Client()
 
 
-pdf_path="sample-handbook.pdf"
+pdf_path="data/<your_file.pdf>"
 items=load_pdf(pdf_path)
 
 
@@ -64,7 +64,7 @@ def execute(step):
     }
 
 history = [
-    {"type": "user_input", "content": [{"type": "text", "text": "what does uploaded pdf say about expenses"}]}
+    {"type": "user_input", "content": [{"type": "text", "text": "what does uploaded pdf say about <question>"}]}
 ]
 
 while True:
