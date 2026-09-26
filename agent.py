@@ -1,5 +1,4 @@
-from tool import rank
-
+from rag import rank, load_pdf
 # this is a basic agent making use of registry
 from google import genai
 import json
@@ -37,8 +36,8 @@ def calc_tool(op1, op2, operation):
     return {"add": op1 + op2, "sub": op1 - op2, "mul": op1 * op2, "div": op1 / op2}[operation]
 
 @tool("Get chunks from pdf that is most similar to given query",
-      query,{"type": "string", "description": "query on pdf"},
-      items={"type":"list","description":"List describing the pdf read in format [(<source>,<text>)]"},
+      query={"type": "string", "description": "query on pdf"},
+      items={"type":"array","description":"List describing the pdf read in format [(<source>,<text>)]"},
       k={"type":"integer", "description":"get n number of closest chunks"})
 def rank_tool(query, items, k):
     return rank(query, items, k)
@@ -60,8 +59,12 @@ def execute(step):
         "result": [{"type": "text", "text": json.dumps(payload)}],
     }
 
+pdf_path="sample-handbook.pdf"
+items=load_pdf(pdf_path)
+
+
 history = [
-    {"type": "user_input", "content": [{"type": "text", "text": "What is 7/7?"}]}
+    {"type": "user_input", "content": [{"type": "text", "text": "what is 9/2"}]}
 ]
 
 while True:
