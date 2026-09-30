@@ -6,7 +6,7 @@ import json
 client = genai.Client()
 
 
-pdf_path="data/<your_file.pdf>"
+pdf_path="data/sample-handbook.pdf"
 items=load_pdf(pdf_path)
 
 
@@ -37,6 +37,7 @@ def tool(description, **params):
       op2={"type": "integer", "description": "Operand 2"},
       operation={"type": "string", "description": "Operation (add/sub/mul/div)"})
 def calc_tool(op1, op2, operation):
+    '''Gets the value from add/sub/mul/div of two operands.'''
     return {"add": op1 + op2, "sub": op1 - op2, "mul": op1 * op2, "div": op1 / op2}[operation]
 
 @tool("Get chunks from uploaded pdf that is most similar to given query",
@@ -44,7 +45,8 @@ def calc_tool(op1, op2, operation):
     #   items={"type":"array","description":"List describing the pdf read in format [(<source>,<text>)]"},
     #   k={"type":"integer", "description":"get n number of closest chunks"})
 def rank_tool(query):  # items is decieded by user
-    return rank(query, items, k=3)  # items and k is hardcoded default
+    '''Get chunks from uploaded pdf that is most similar to given query'''
+    return rank(query,items)  # items and k is hardcoded default
 
 #dispatcher: a function_call step in, a function_result dict out, never a crash ----------
 def execute(step):
